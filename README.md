@@ -1,9 +1,14 @@
 # threat-intel
+
 Centralized threat intel script grabbing information from robtex, urlhaus, and threatcrowd.
 
 # TODO:
- Fixing some robtex parsing
+
  Adding additional threat feeds
+
+# DONE:
+
+Fixed Robtex Parsing issues(99%)
 
 # Requirements:
 Python3
