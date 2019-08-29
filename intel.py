@@ -78,31 +78,31 @@ class urlgrab:
             results22 = re.findall(r"(?<=\>)[\w\.\-\,\(\)\d\s\/]+", str(results), re.M|re.I) #regex find all non-html data we want to view
             results2 = re.findall(r"[\w\.\-\,\s\.]{3,}",str(results22), re.I|re.M)
             if len(results2) > 14:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12]+' | '+results2[14]+' | '+results2[15])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12]+' | '+results2[14]+' | '+results2[15])
             elif len(results2) == 14:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12])
             elif len(results2) == 13:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4]+' | '+results2[8]+' | '+results2[12])
             elif len(results2) == 12:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[6]+' | '+results2[8]+' | '+results2[10]) 
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[6]+' | '+results2[8]+' | '+results2[10]) 
             elif len(results2) == 11:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[6]+' | '+results2[8]+' | '+results2[10]) 
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[6]+' | '+results2[8]+' | '+results2[10]) 
             elif len(results2) == 10:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[6]+' | '+results2[8])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[6]+' | '+results2[8])
             elif len(results2) == 9:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[6]+' | '+results2[8])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[6]+' | '+results2[8])
             elif len(results2) == 8:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4]+' | '+results2[6])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4]+' | '+results2[6])
             elif len(results2) == 7:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4]+' | '+results2[6])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4]+' | '+results2[6])
             elif len(results2) == 6:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4])
             elif len(results2) == 5:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[4])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[4])
             elif len(results2) == 4:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[3])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[3])
             elif len(results2) == 3:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2])
+                lookup.append(results2[2]+' | '+results2[0]+results2[1])
             elif len(results2) == 2:
                 lookup.append(results2[0]+results2[1])
             elif len(results2) == 1:
