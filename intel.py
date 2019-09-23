@@ -172,8 +172,11 @@ class urlgrab:
             
             if len(results2) == 0:
                 lookup.append(u+' Nothing Found! Trying pinging the host and looking up that IP')
+            elif len(results2) > 8:
+                lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[5]+' | '+results2[7]+' | '+results2[8]+' '+results2[9])
             else:
-                lookup.append(results2[0]+results2[1]+' | '+results2[2]+' | '+results2[5]+' | '+results2[7]+' | '+results2[8]+' '+results2[9])
+                lookup.append(results2[0]+results2[1])
+
         for u in urlhaus: 
             response = requests.get(u, verify=False) 
             soup = BeautifulSoup(response.text, 'html.parser') 
