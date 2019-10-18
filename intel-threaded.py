@@ -194,11 +194,11 @@ if __name__ == "__main__":
         for r in results2:
             lookup.append("https://www.threatcrowd.org/malware.php?md5=" + '{}'.format(r) + ' {}'.format(ip) )
 
-    """def urlhau(urlh):
+    def urlhau(urlh):
         response = requests.get(urlh, verify=False) 
         soup = BeautifulSoup(response.text, 'html.parser') 
         results = re.findall(r"(?<=\>)http.*(?=\<\/a\>\<\/td\>\<td\>\<span class\=\"badge badge.*\"\>)", str(soup), re.M|re.I)
-        lookup.append(results)"""
+        lookup.append(results)
 
 
 
@@ -221,11 +221,11 @@ if __name__ == "__main__":
             jobs.append(b2)
             time.sleep(.256)
             b2.start()
-        """for urlh in urlhaus:
+        for urlh in urlhaus:
             b3 = threading.Thread(target=urlhau, args=(urlh,))
             jobs.append(b3)
             time.sleep(.1)
-            b3.start()"""
+            b3.start()
         for j in jobs:
             j.join()
 
