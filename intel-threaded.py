@@ -194,11 +194,11 @@ if __name__ == "__main__":
         for r in results2:
             lookup.append("https://www.threatcrowd.org/malware.php?md5=" + '{}'.format(r) + ' {}'.format(ip) )
 
-    def urlhau(urlh):
+    """def urlhau(urlh):
         response = requests.get(urlh, verify=False) 
         soup = BeautifulSoup(response.text, 'html.parser') 
         results = re.findall(r"(?<=\>)http.*(?=\<\/a\>\<\/td\>\<td\>\<span class\=\"badge badge.*\"\>)", str(soup), re.M|re.I)
-        lookup.append(results)
+        lookup.append(results)"""
 
 
 
@@ -209,23 +209,25 @@ if __name__ == "__main__":
         for robtip in robtexip:
             b = threading.Thread(target=robte, args=(robtip,None,))
             jobs.append(b)
-            time.sleep(.256)
+            time.sleep(.22)
             b.start()
         for robturl in robtexurl:
             b1 = threading.Thread(target=robte, args=(None,robturl,))
             jobs.append(b1)
-            time.sleep(.256)
+            time.sleep(.22)
             b1.start()
         for ur in threatcrowd:
             b2 = threading.Thread(target=threatcrow,args=(ur,))
             jobs.append(b2)
             time.sleep(.256)
             b2.start()
-        for urlh in urlhaus:
+        """for urlh in urlhaus:
             b3 = threading.Thread(target=urlhau, args=(urlh,))
             jobs.append(b3)
-            time.sleep(.6)
-            b3.start()
+            time.sleep(.1)
+            b3.start()"""
+        for j in jobs:
+            j.join()
 
     threads()
 
