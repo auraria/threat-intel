@@ -1,44 +1,49 @@
-import json
-import re
-import sys
-import requests
-import urllib3
-from bs4 import BeautifulSoup
+if __name__ == "__main__":
+    import requests
+    import os
+    import re
+    import sys
+    import threading
+    import json
+    import time
+    from bs4 import BeautifulSoup
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+    
+    starttime = time.time()
 
-urlhaus = [] 
-robtexip = [] 
-robtexurl = [] 
-threatcrowd = [] 
-lookup = [] #list of lookup responses
-
-class urlgrab:
-
-    def __init__(self, argv): 
-
-        self.ip = argv 
-        for i in self.ip: 
-            self.url = 'https://urlhaus.abuse.ch/browse.php?search={}'.format(i)
-            urlhaus.append(self.url) 
-            self.url1 = 'https://www.threatcrowd.org/ip.php?ip={}'.format(i)
-            threatcrowd.append(self.url1)    
-            self.url2 = 'https://www.threatcrowd.org/domain.php?domain={}'.format(i) 
-            threatcrowd.append(self.url2)    
-            if re.match(r"[\d\.]+",i) is not None: #This regex searches for IP address format and will return the ip, if not it will go to the else statement on 21
-                self.url = 'https://www.robtex.com/ip-lookup/{}'.format(i) #robtex url to search with the ip from self.ip in the url to search
-                robtexip.append(self.url) #appends robtex url with ips to search to the urls list
+    robtexip = [] 
+    robtexurl = [] 
+    threatcrowd = [] 
+    urlhaus = []
+    lookup = [] 
+    def reqs(argv):
+        for a in argv: 
+            url = 'https://urlhaus.abuse.ch/browse.php?search={}'.format(a)
+            urlhaus.append(url) 
+            url1 = 'https://www.threatcrowd.org/ip.php?ip={}'.format(a)
+            threatcrowd.append(url1)    
+            url2 = 'https://www.threatcrowd.org/domain.php?domain={}'.format(a) 
+            threatcrowd.append(url2)    
+            if re.match(r"[\d\.]+",a) is not None: #This regex searches for IP address format and will return the ip, if not it will go to the else statement on 21
+                url = 'https://www.robtex.com/ip-lookup/{}'.format(a) #robtex url to search with the ip from self.ip in the url to search
+                robtexip.append(url) #appends robtex url with ips to search to the urls list
             else:
-                self.url = 'https://www.robtex.com/ip-lookup/{}'.format(i) #robtex url to search with the ip from self.ip in the url to search
-                robtexurl.append(self.url) #appends robtex url with ips to search to the urls list 
-            
+                url = 'https://www.robtex.com/ip-lookup/{}'.format(a) #robtex url to search with the ip from self.ip in the url to search
+                robtexurl.append(url) #appends robtex url with ips to search to the urls list     
+    #reqs(sys.argv[1:])
+    works = []
+    inp = sys.argv[1:]
+    req = threading.Thread(target=reqs,args=(inp[0:],))
+    works.append(req)
+    req.start()
 
 
-    def get(self):
-
-        for i in robtexip: #loop to go through urls in the urls list
-            response = requests.get(i, verify=False) #get request to completed robtex url from above
+    def robte(robtip,robturl):
+        if robtip != None:
+            response = requests.get(robtip, verify=False) #get request to completed robtex url from above
             soup = BeautifulSoup(response.text, 'html.parser')  #use Beautifulsoup's html parser for the output and assign that to soup
             results = soup.find_all('div', class_='dns')    #take html output from soup, find all div sets, under the class dns(this is all found from the html output itself)
             results2 = re.findall(r"(?<=\>)[\w\.\-\,\(\)\:\s\/]+(?!\<\/b)", str(results), re.M|re.I) #regex find all non-html data we want to view
@@ -129,10 +134,10 @@ class urlgrab:
             elif len(results2) == 1:
                 lookup.append(results2[0])
             elif len(results2) == 0:
-                lookup.append(i+' Nothing Found! Trying pinging the host and looking up that IP')
-
-        for u in robtexurl: #loop to go through urls in the urls list
-            response = requests.get(u, verify=False) #get request to completed robtex url from above
+                lookup.append(robtip+' Nothing Found! Trying pinging the host and looking up that IP')
+            
+        if robturl != None:
+            response = requests.get(robturl, verify=False) #get request to completed robtex url from above
             soup = BeautifulSoup(response.text, 'html.parser')  #use Beautifulsoup's html parser for the output and assign that to soup
             results = soup.find_all('div', class_='dns')    #take html output from soup, find all div sets, under the class dns(this is all found from the html output itself)
             results22 = re.findall(r"(?<=\>)[\w\.\-\,\(\)\:\d\s\/]+", str(results), re.M|re.I) #regex find all non-html data we want to view
@@ -168,39 +173,69 @@ class urlgrab:
             try:
                 results2.remove('route')
             except:
-                pass
-            
+                pass            
             if len(results2) == 0:
-                lookup.append(u+' Nothing Found! Trying pinging the host and looking up that IP')
+                lookup.append(robturl+' Nothing Found! Trying pinging the host and looking up that IP')
             elif len(results2) > 8:
                 lookup.append(results2[2]+' | '+results2[0]+results2[1]+' | '+results2[5]+' | '+results2[7]+' | '+results2[8]+' '+results2[9])
             else:
                 lookup.append(results2[0]+results2[1])
 
-        for u in urlhaus: 
-            response = requests.get(u, verify=False) 
-            soup = BeautifulSoup(response.text, 'html.parser') 
-            results2 = re.findall(r"(?<=\>)http.*(?=\<\/a\>\<\/td\>\<td\>\<span class\=\"badge badge.*\"\>)", str(soup), re.M|re.I)
-            lookup.append(results2)
-        for u in threatcrowd:
-            response = requests.get(u, verify=False)
-            soup = BeautifulSoup(response.text, 'html.parser') 
-            results = soup.find_all('a', class_='text-uppercase')  
-            results1 = soup.find_all('table', class_='table table-striped')  
-            results2 = re.findall(r"[\w\s\-\_\.\,\(\)\!\#\$\%\^\&\*\@\;\:]+(?=\<\/)", str(results), re.M|re.I) 
-            results3 = re.findall(r"\/domain[\w\-\.\_\?\=]+(?=\")(?!\<)", str(results1), re.M|re.I) 
-            ip = re.findall(r"[\w\.]+$", str(u), re.M|re.I)
-            for r3 in results3:
-                lookup.append("https://www.threatcrowd.org" + '{}'.format(r3) + ' {}'.format(ip) )
-            for r in results2:
-                lookup.append("https://www.threatcrowd.org/malware.php?md5=" + '{}'.format(r) + ' {}'.format(ip) )
+    def threatcrow(ur):
+        response = requests.get(ur, verify=False)
+        soup = BeautifulSoup(response.text, 'html.parser') 
+        results = soup.find_all('a', class_='text-uppercase')  
+        results1 = soup.find_all('table', class_='table table-striped')  
+        results2 = re.findall(r"[\w\s\-\_\.\,\(\)\!\#\$\%\^\&\*\@\;\:]+(?=\<\/)", str(results), re.M|re.I) 
+        results3 = re.findall(r"\/domain[\w\-\.\_\?\=]+(?=\")(?!\<)", str(results1), re.M|re.I) 
+        ip = re.findall(r"[\w\-\_\.]+$", str(ur), re.M|re.I)
+        for r3 in results3:
+            lookup.append("https://www.threatcrowd.org" + '{}'.format(r3) + ' {}'.format(ip) )
+        for r in results2:
+            lookup.append("https://www.threatcrowd.org/malware.php?md5=" + '{}'.format(r) + ' {}'.format(ip) )
+
+    """def urlhau(urlh):
+        response = requests.get(urlh, verify=False) 
+        soup = BeautifulSoup(response.text, 'html.parser') 
+        results = re.findall(r"(?<=\>)http.*(?=\<\/a\>\<\/td\>\<td\>\<span class\=\"badge badge.*\"\>)", str(soup), re.M|re.I)
+        lookup.append(results)"""
 
 
-            
 
-            
-req = urlgrab(sys.argv[1:]) 
-req.get() #runs get function with req assigned arg(s)
 
-for l in lookup: #looping through the lookup array
-    print(l) #print individual lookups
+    def threads():
+        
+        jobs = []
+        for robtip in robtexip:
+            b = threading.Thread(target=robte, args=(robtip,None,))
+            jobs.append(b)
+            time.sleep(.22)
+            b.start()
+        for robturl in robtexurl:
+            b1 = threading.Thread(target=robte, args=(None,robturl,))
+            jobs.append(b1)
+            time.sleep(.22)
+            b1.start()
+        for ur in threatcrowd:
+            b2 = threading.Thread(target=threatcrow,args=(ur,))
+            jobs.append(b2)
+            time.sleep(.256)
+            b2.start()
+        """for urlh in urlhaus:
+            b3 = threading.Thread(target=urlhau, args=(urlh,))
+            jobs.append(b3)
+            time.sleep(.1)
+            b3.start()"""
+        for j in jobs:
+            j.join()
+
+    threads()
+
+
+
+    for l in lookup:
+        print(l)
+
+
+    endtime = time.time() - starttime
+    print("This took "+  str(endtime) + " seconds")
